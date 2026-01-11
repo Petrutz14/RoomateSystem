@@ -1,76 +1,122 @@
-### 1. Create a User
-POST http://localhost:8080/api/users
+
+POST http://localhost:8080/api/users/register
 Content-Type: application/json
 
 {
-  "username": "labaaaa",
-  "email": "laaabaaaa@g.com",
-  "password": "123"
+  "username": "Dani Nepotel1234",
+  "email": "daninepotu1234@yahoo.com",
+  "password": "1234567890"
 }
 
-### 2. Get All Users
-GET http://localhost:8080/api/users
+### 2. Login as User A
+# @name loginA
+POST http://localhost:8080/api/users/login
+Content-Type: application/json
 
-### 3. Create an Apartment
+{
+  "email": "daninepotu1234@yahoo.com",
+  "password": "1234567890"
+}
+
+### 3. Store the JWT Token from Login
+@tokenA = {{eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNEB5YWhvby5jb20iLCJpYXQiOjE3NjgxNTgwNzYsImV4cCI6MTc2ODI0NDQ3Nn0.llRWvGWkG6jrNr5JOF35TkEWnZFF4HKqC9xcvMfRKoY}}
+
+
+###########################################################
+### APARTMENT MANAGEMENT
+###########################################################
+
+### 4. Create an Apartment (User A)
+# This will automatically link User A as a member in the DB
 POST http://localhost:8080/api/apartments
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNEB5YWhvby5jb20iLCJpYXQiOjE3NjgxNTgwNzYsImV4cCI6MTc2ODI0NDQ3Nn0.llRWvGWkG6jrNr5JOF35TkEWnZFF4HKqC9xcvMfRKoY
 Content-Type: application/json
 
 {
-  "address": "123 Baker Street, London"
+  "address": "123 Security Avenue, Java City"
 }
 
-### 4. Get All Apartments
+### 5. Get All My Apartments
+# Should return the apartment created above
 GET http://localhost:8080/api/apartments
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNEB5YWhvby5jb20iLCJpYXQiOjE3NjgxNTgwNzYsImV4cCI6MTc2ODI0NDQ3Nn0.llRWvGWkG6jrNr5JOF35TkEWnZFF4HKqC9xcvMfRKoY
 
-### 5. Add User to Apartment (Linking)
-# Replace '1' with actual IDs from the previous GET requests
-POST http://localhost:8080/api/apartments/1/members/1
 
-### 6. Create an Expense
-# user_id 1 pays for apartment_id 1
+###########################################################
+### EXPENSE MANAGEMENT
+###########################################################
+
+### 6. Create an Expense for Apartment 1
+# Note: Ensure the apartmentId matches the ID generated in step 4
 POST http://localhost:8080/api/expenses
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNEB5YWhvby5jb20iLCJpYXQiOjE3NjgxNTgwNzYsImV4cCI6MTc2ODI0NDQ3Nn0.llRWvGWkG6jrNr5JOF35TkEWnZFF4HKqC9xcvMfRKoY
 Content-Type: application/json
 
 {
-  "userId": 1,
+  "title": "Monthly Rent",
+  "category": "Housing",
+  "amount": 1200.50,
   "apartmentId": 1,
-  "title": "Monthly Electricity",
-  "category": "Utilities",
-  "amount": 85.50,
-  "expenseDate": "2026-01-10"
+  "expenseDate": "2026-01-11"
 }
 
-### 7. Create another Expense (Groceries)
-POST http://localhost:8080/api/expenses
-Content-Type: application/json
-
-{
-  "userId":1,
-  "apartmentId": "1",
-  "title": "Rum",
-  "category": "Food",
-  "amount": 120.00,
-  "expenseDate": ""
-}
-
-### 8. Get All Expenses for an Apartment
+### 7. Get Expenses for Apartment 1
+# This uses your new secure getByApartmentForUser method
 GET http://localhost:8080/api/expenses/apartment/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNEB5YWhvby5jb20iLCJpYXQiOjE3NjgxNTgwNzYsImV4cCI6MTc2ODI0NDQ3Nn0.llRWvGWkG6jrNr5JOF35TkEWnZFF4HKqC9xcvMfRKoY
 
-### 9. Update an Expense
-# Change amount or category
-PUT http://localhost:8080/api/expenses/1
+
+###########################################################
+### SECURITY / INTRUDER TEST
+###########################################################
+
+### 8. Register User B (The "Intruder")
+POST http://localhost:8080/api/users/register
 Content-Type: application/json
 
 {
-  "apartmentId": 1,
-  "title": "Monthly Electricity - Adjusted",
-  "category": "Utilities",
-  "amount": 90.00,
-  "expenseDate": "2026-01-10"
+  "username": "Intruder",
+  "email": "intruder@hacker.com",
+  "password": "hackerpassword"
 }
 
-### 10. Delete an Expense
-DELETE http://localhost:8080/api/expenses/1
+### 9. Login as User B
+# @name loginB
+POST http://localhost:8080/api/users/login
+Content-Type: application/json
 
-### 11. Delete an Apartment
-DELETE http://localhost:8080/api/apartments/1
+{
+  "email": "intruder@hacker.com",
+  "password": "hackerpassword"
+}
+
+###
+
+### 10. Intruder tries to see User A's Apartment (SHOULD FAIL)
+# This should return a 500/403 "Access Denied" because Intruder is not a member
+GET http://localhost:8080/api/apartments/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpbnRydWRlckBoYWNrZXIuY29tIiwiaWF0IjoxNzY4MTU4MjI3LCJleHAiOjE3NjgyNDQ2Mjd9.vBY2JPQalgdl5nBOzBqu70L4pS5YuNIJ7dkZLqucgC8
+
+### 11. Intruder tries to see User A's Expenses (SHOULD FAIL)
+# This should return an empty list or error because the SQL filters by User B's email
+GET http://localhost:8080/api/expenses/apartment/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpbnRydWRlckBoYWNrZXIuY29tIiwiaWF0IjoxNzY4MTU4MjI3LCJleHAiOjE3NjgyNDQ2Mjd9.vBY2JPQalgdl5nBOzBqu70L4pS5YuNIJ7dkZLqucgC8
+
+
+###
+POST http://localhost:8080/api/expenses
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNEB5YWhvby5jb20iLCJpYXQiOjE3NjgxNTgwNzYsImV4cCI6MTc2ODI0NDQ3Nn0.llRWvGWkG6jrNr5JOF35TkEWnZFF4HKqC9xcvMfRKoY
+
+{
+  "title": "January Maintenance",
+  "amount": 150.50,
+  "apartmentId": 1,
+  "category": "Maintenance",
+  "date": "2026-01-11"
+}
+
+###
+GET http://localhost:8080/api/expenses/apartment/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNEB5YWhvby5jb20iLCJpYXQiOjE3NjgxNTgwNzYsImV4cCI6MTc2ODI0NDQ3Nn0.llRWvGWkG6jrNr5JOF35TkEWnZFF4HKqC9xcvMfRKoY

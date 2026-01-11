@@ -1,7 +1,8 @@
---DROP TABLE IF EXISTS expenses;
---DROP TABLE IF EXISTS apartment_members;
---DROP TABLE IF EXISTS apartments;
---DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS payments;
+DROP TABLE IF EXISTS expenses;
+DROP TABLE IF EXISTS apartment_members;
+DROP TABLE IF EXISTS apartments;
+DROP TABLE IF EXISTS users;
 
 
 -- -----------------------------
@@ -45,4 +46,12 @@ CREATE TABLE expenses (
                           amount NUMERIC(10, 2) NOT NULL CHECK (amount >= 0),
                           expense_date DATE NOT NULL,
                           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE payments (
+                          id SERIAL PRIMARY KEY,
+                          expense_id INTEGER REFERENCES expenses(id) ON DELETE CASCADE,
+                          user_id INTEGER REFERENCES users(id),
+                          amount DECIMAL(19, 2) NOT NULL,
+                          payment_date DATE DEFAULT CURRENT_DATE
 );

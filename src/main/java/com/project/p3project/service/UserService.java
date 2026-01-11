@@ -13,10 +13,11 @@ import java.util.List;
 @Service
 public class UserService {
     private final UserDao userDao;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public UserService(UserDao userDao) {
+    public UserService(UserDao userDao, BCryptPasswordEncoder passwordEncoder) {
         this.userDao = userDao;
+        this.passwordEncoder = passwordEncoder;
     }
 
     //Create user (Sign up)
@@ -27,6 +28,18 @@ public class UserService {
         user.setPassword(hashed);
 
         userDao.save(user);
+    }
+
+    //Login checker
+    public User login(String email, String rawPassword) {
+        User user = userDao.findByEmail(email);
+
+        //Security Check
+        if (user == null || !passwordEncoder.matches(rawPassword, user.getPassword())) {
+            throw new IllegalArgumentException("Invalid email or password.");
+        }
+
+        return user;
     }
 
     //Get user by id

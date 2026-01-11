@@ -1,8 +1,10 @@
 package com.project.p3project.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class Expense {
     private Long id;
@@ -11,8 +13,10 @@ public class Expense {
     private String title;
     private String category; // New field
     private BigDecimal amount;
+    @JsonProperty("date") //Map JSON to this
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate expenseDate;
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     public Expense() {}
 
@@ -31,6 +35,6 @@ public class Expense {
     public void setAmount(BigDecimal amount) { this.amount = amount; }
     public LocalDate getExpenseDate() { return expenseDate; }
     public void setExpenseDate(LocalDate expenseDate) { this.expenseDate = expenseDate; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public LocalDate getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDate createdAt) { this.createdAt = createdAt; }
 }

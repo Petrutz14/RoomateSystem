@@ -1,6 +1,7 @@
 package com.project.p3project.dao;
 
 import com.project.p3project.model.User;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -59,6 +60,16 @@ public class UserDao {
         return jdbcTemplate.query("SELECT * FROM users", new UserRowMapper());
     }
 
+
+    //Get by email (for auth)
+    public User findByEmail(String email) {
+        String sql = "SELECT * FROM users WHERE email = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, new UserRowMapper(), email);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
     //Delete one user
     public int deleteById(Long id) {
         return jdbcTemplate.update(

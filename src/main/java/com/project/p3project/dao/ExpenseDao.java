@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -29,10 +30,16 @@ public class ExpenseDao {
             expense.setTitle(rs.getString("title"));
             expense.setCategory(rs.getString("category"));
             expense.setAmount(rs.getBigDecimal("amount"));
-            expense.setExpenseDate(rs.getDate("expense_date").toLocalDate());
-            if (rs.getTimestamp("created_at") != null) {
-                expense.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+
+            // Modern way to fetch LocalDate from JDBC
+            expense.setExpenseDate(rs.getObject("expense_date", LocalDate.class));
+
+            // Handle created_at safely
+            LocalDate createdAt = rs.getObject("created_at", LocalDate.class);
+            if (createdAt != null) {
+                expense.setCreatedAt(createdAt);
             }
+
             return expense;
         }
     }
@@ -40,7 +47,12 @@ public class ExpenseDao {
     public int save(Expense expense) {
         return jdbcTemplate.update(
                 "INSERT INTO expenses (user_id, apartment_id, title, category, amount, expense_date) VALUES (?, ?, ?, ?, ?, ?)",
-                expense.getUserId(), expense.getApartmentId(), expense.getTitle(), expense.getCategory(), expense.getAmount(), expense.getExpenseDate()
+                expense.getUserId(),
+                expense.getApartmentId(),
+                expense.getTitle(),
+                expense.getCategory(),
+                expense.getAmount(),
+                expense.getExpenseDate() // Pass the LocalDate directly
         );
     }
 
@@ -52,8 +64,11 @@ public class ExpenseDao {
         }
     }
 
-    public List<Expense> findByApartmentId(Long apartmentId) {
-        return jdbcTemplate.query("SELECT * FROM expenses WHERE apartment_id = ?", new ExpenseRowMapper(), apartmentId);
+    public List<Expense> findByApartmentAndUser(Long apartmentId, String userEmail) {
+        String sql = "SELECT e.* FROM expenses e " +
+                "JOIN users u ON e.user_id = u.id " +
+                "WHERE e.apartment_id = ? AND u.email = ?";
+        return jdbcTemplate.query(sql, new ExpenseRowMapper(), apartmentId, userEmail);
     }
 
     public List<Expense> findAll() {
@@ -63,7 +78,12 @@ public class ExpenseDao {
     public int update(Long id, Expense expense) {
         return jdbcTemplate.update(
                 "UPDATE expenses SET apartment_id = ?, title = ?, category = ?, amount = ?, expense_date = ? WHERE id = ?",
-                expense.getApartmentId(), expense.getTitle(), expense.getCategory(), expense.getAmount(), expense.getExpenseDate(), id
+                expense.getApartmentId(),
+                expense.getTitle(),
+                expense.getCategory(),
+                expense.getAmount(),
+                expense.getExpenseDate(),
+                id
         );
     }
 

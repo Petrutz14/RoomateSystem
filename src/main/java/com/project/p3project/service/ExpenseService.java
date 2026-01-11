@@ -5,6 +5,7 @@ import com.project.p3project.dao.ExpenseDao;
 import com.project.p3project.dao.UserDao;
 import com.project.p3project.exception.BlankDataException;
 import com.project.p3project.model.Expense;
+import com.project.p3project.model.User;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -23,32 +24,22 @@ public class ExpenseService {
         this.apartmentDao = apartmentDao;
     }
 
-    public void create(Expense expense) {
+    public void createWithUser(Expense expense, String email) {
+        User user = userDao.findByEmail(email);
+        //Set the userId on the expense object
+        expense.setUserId(user.getId());
         validate(expense);
-        if (userDao.findById(expense.getUserId()) == null) {
-            throw new IllegalArgumentException("User does not exist");
-        }
-        if (apartmentDao.findById(expense.getApartmentId()) == null) {
-            throw new IllegalArgumentException("Apartment does not exist");
-        }
         expenseDao.save(expense);
     }
 
-    public Expense getById(Long id) {
-        Expense expense = expenseDao.findById(id);
-        if (expense == null) {
-            throw new IllegalArgumentException("Expense not found");
-        }
-        return expense;
+
+    public List<Expense> getByApartmentForUser(Long apartmentId, String email) {
+        return expenseDao.findByApartmentAndUser(apartmentId, email);
     }
 
-    public List<Expense> getByApartmentId(Long apartmentId) {
-        return expenseDao.findByApartmentId(apartmentId);
-    }
-
-    public List<Expense> getAll() {
-        return expenseDao.findAll();
-    }
+    //public List<Expense> getAll() {
+    //    return expenseDao.findAll();
+    //}
 
     public void update(Long id, Expense expense) {
         validate(expense);
@@ -94,7 +85,7 @@ public class ExpenseService {
         }
 
         if (expense.getExpenseDate() == null) {
-            throw new BlankDataException("Expense date is required.");
+            throw new BlankDataException("Expense date");
         }
     }
 }

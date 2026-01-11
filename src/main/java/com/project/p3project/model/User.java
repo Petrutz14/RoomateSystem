@@ -1,5 +1,6 @@
 package com.project.p3project.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -11,6 +12,7 @@ public class User {
     private Long id;
     private String username;
     private String email;
+    @JsonProperty("password")
     private String password;
     private LocalDateTime createdAt;
 

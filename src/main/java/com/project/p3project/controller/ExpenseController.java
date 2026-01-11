@@ -2,6 +2,7 @@ package com.project.p3project.controller;
 
 import com.project.p3project.model.Expense;
 import com.project.p3project.service.ExpenseService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,33 +17,20 @@ public class ExpenseController {
         this.expenseService = expenseService;
     }
 
-    @PostMapping
-    public void create(@RequestBody Expense expense) {
-        expenseService.create(expense);
+    private String getAuthenticatedUserEmail() {
+        //Get email when request is made
+        return SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
     }
 
-    @GetMapping("/{id}")
-    public Expense getById(@PathVariable Long id) {
-        return expenseService.getById(id);
+    @PostMapping
+    public void create(@RequestBody Expense expense) {
+        String email = getAuthenticatedUserEmail();
+        expenseService.createWithUser(expense, email);
     }
 
     @GetMapping("/apartment/{apartmentId}")
     public List<Expense> getByApartment(@PathVariable Long apartmentId) {
-        return expenseService.getByApartmentId(apartmentId);
-    }
-
-    @GetMapping
-    public List<Expense> getAll() {
-        return expenseService.getAll();
-    }
-
-    @PutMapping("/{id}")
-    public void update(@PathVariable Long id, @RequestBody Expense expense) {
-        expenseService.update(id, expense);
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        expenseService.delete(id);
+        String email = getAuthenticatedUserEmail();
+        return expenseService.getByApartmentForUser(apartmentId, email);
     }
 }

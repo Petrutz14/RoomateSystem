@@ -30,8 +30,25 @@ public class ApartmentDao {
         }
     }
 
-    public int save(Apartment apartment) {
-        return jdbcTemplate.update("INSERT INTO apartments (address) VALUES (?)", apartment.getAddress());
+    public Long save(Apartment apartment) {
+        String sql = "INSERT INTO apartments (address) VALUES (?) RETURNING id";
+        return jdbcTemplate.queryForObject(sql, Long.class, apartment.getAddress());
+    }
+
+    public boolean isMember(Long apartmentId, String email) {
+        String sql = "SELECT COUNT(*) FROM apartment_members am " +
+                "JOIN users u ON am.user_id = u.id " +
+                "WHERE am.apartment_id = ? AND u.email = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, apartmentId, email);
+        return count != null && count > 0;
+    }
+
+    public List<Apartment> findAllForUser(String email) {
+        String sql = "SELECT a.* FROM apartments a " +
+                "JOIN apartment_members am ON a.id = am.apartment_id " +
+                "JOIN users u ON am.user_id = u.id " +
+                "WHERE u.email = ?";
+        return jdbcTemplate.query(sql, new ApartmentRowMapper(), email);
     }
 
     public Apartment findById(Long id) {
@@ -40,10 +57,6 @@ public class ApartmentDao {
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
-    }
-
-    public List<Apartment> findAll() {
-        return jdbcTemplate.query("SELECT * FROM apartments", new ApartmentRowMapper());
     }
 
     public int update(Long id, Apartment apartment) {
