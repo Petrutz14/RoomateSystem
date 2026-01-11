@@ -15,6 +15,7 @@ public class User {
     @JsonProperty("password")
     private String password;
     private LocalDateTime createdAt;
+    private String role;
 
     //Constructors
 
@@ -69,5 +70,13 @@ public class User {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

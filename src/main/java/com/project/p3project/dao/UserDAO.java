@@ -28,6 +28,7 @@ public class UserDAO {
             user.setUsername(rs.getString("username"));
             user.setEmail(rs.getString("email"));
             user.setPassword(rs.getString("password_hash"));
+            user.setRole(rs.getString("role"));
             user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
             return user;
         }
@@ -36,8 +37,11 @@ public class UserDAO {
     // Insert a new user
     public int save(User user) {
         return jdbcTemplate.update(
-                "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)",
-                user.getUsername(), user.getEmail(), user.getPassword()
+                "INSERT INTO users (username, email, password_hash, role) VALUES (?, ?, ?, ?)",
+                user.getUsername(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getRole() == null ? "USER" : user.getRole() // Default to USER if null
         );
     }
 
@@ -49,7 +53,6 @@ public class UserDAO {
                     new UserRowMapper(),
                     id
             );
-        // Convert wonky Spring error to null
         } catch (org.springframework.dao.EmptyResultDataAccessException e) {
             return null;
         }
@@ -60,7 +63,6 @@ public class UserDAO {
         return jdbcTemplate.query("SELECT * FROM users", new UserRowMapper());
     }
 
-
     //Get by email (for auth)
     public User findByEmail(String email) {
         String sql = "SELECT * FROM users WHERE email = ?";
@@ -70,6 +72,7 @@ public class UserDAO {
             return null;
         }
     }
+
     //Delete one user
     public int deleteById(Long id) {
         return jdbcTemplate.update(
@@ -80,10 +83,14 @@ public class UserDAO {
 
     //Update one user
     public int update(Long id, User user) {
+        // Updated to allow updating the role
         return jdbcTemplate.update(
-                "UPDATE users SET username = ?, email = ?, password_hash = ? WHERE id = ?",
-                user.getUsername(), user.getEmail(), user.getPassword(), id
+                "UPDATE users SET username = ?, email = ?, password_hash = ?, role = ? WHERE id = ?",
+                user.getUsername(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getRole(),
+                id
         );
     }
-
 }

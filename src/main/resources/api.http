@@ -3,9 +3,9 @@ POST http://localhost:8080/api/users/register
 Content-Type: application/json
 
 {
-  "username": "daninepotu12345",
-  "email": "daninepotu12345@yahoo.com",
-  "password": "password12345"
+  "username": "muienepotu123",
+  "email": "muienepotu123@yahoo.com",
+  "password": "password123"
 }
 
 
@@ -60,5 +60,19 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNDVAeWFob
 ###
 GET http://localhost:8080/api/expenses/apartment/1
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNDVAeWFob28uY29tIiwiaWF0IjoxNzY4MTY2NzkyLCJleHAiOjE3NjgyNTMxOTJ9.1yu9K8tQHPfs_sIUSUmSPdBvODVyT9sjHwAIJr4tMIM
+
+###
+###eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNDVAeWFob28uY29tIiwiaWF0IjoxNzY4MTY5Mzk4LCJleHAiOjE3NjgyNTU3OTh9.wmFFVuW2b0QtEZvjx5jEETI5FMr29DULlSgYJTYEZx8
+###
+
+
+###
+###eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtdWllbmVwb3R1MTIzQHlhaG9vLmNvbSIsImlhdCI6MTc2ODE2OTQ3MiwiZXhwIjoxNzY4MjU1ODcyfQ.oYqNXC9_37NBTCWyTT36-jHVcZNUYQ6prlzyPYXcGBc
+###
+
+GET http://localhost:8080/api/admin/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtdWllbmVwb3R1MTIzQHlhaG9vLmNvbSIsImlhdCI6MTc2ODE2OTQ3MiwiZXhwIjoxNzY4MjU1ODcyfQ.oYqNXC9_37NBTCWyTT36-jHVcZNUYQ6prlzyPYXcGBc
+
+
 
 

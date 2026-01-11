@@ -43,12 +43,6 @@ public class UserController {
         return userService.getById(id);
     }
 
-    //GET all users
-    @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAll();
-    }
-
     //DELETE user
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {

@@ -13,6 +13,7 @@ CREATE TABLE users (
                        username VARCHAR(50) NOT NULL UNIQUE,
                        email VARCHAR(100) NOT NULL UNIQUE,
                        password_hash VARCHAR(255) NOT NULL,
+                       role VARCHAR(20) DEFAULT 'USER' CHECK (role IN ('ADMIN', 'USER')),
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
