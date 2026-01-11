@@ -1,0 +1,76 @@
+### 1. Create a User
+POST http://localhost:8080/api/users
+Content-Type: application/json
+
+{
+  "username": "labaaaa",
+  "email": "laaabaaaa@g.com",
+  "password": "123"
+}
+
+### 2. Get All Users
+GET http://localhost:8080/api/users
+
+### 3. Create an Apartment
+POST http://localhost:8080/api/apartments
+Content-Type: application/json
+
+{
+  "address": "123 Baker Street, London"
+}
+
+### 4. Get All Apartments
+GET http://localhost:8080/api/apartments
+
+### 5. Add User to Apartment (Linking)
+# Replace '1' with actual IDs from the previous GET requests
+POST http://localhost:8080/api/apartments/1/members/1
+
+### 6. Create an Expense
+# user_id 1 pays for apartment_id 1
+POST http://localhost:8080/api/expenses
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "apartmentId": 1,
+  "title": "Monthly Electricity",
+  "category": "Utilities",
+  "amount": 85.50,
+  "expenseDate": "2026-01-10"
+}
+
+### 7. Create another Expense (Groceries)
+POST http://localhost:8080/api/expenses
+Content-Type: application/json
+
+{
+  "userId":1,
+  "apartmentId": "1",
+  "title": "Rum",
+  "category": "Food",
+  "amount": 120.00,
+  "expenseDate": ""
+}
+
+### 8. Get All Expenses for an Apartment
+GET http://localhost:8080/api/expenses/apartment/1
+
+### 9. Update an Expense
+# Change amount or category
+PUT http://localhost:8080/api/expenses/1
+Content-Type: application/json
+
+{
+  "apartmentId": 1,
+  "title": "Monthly Electricity - Adjusted",
+  "category": "Utilities",
+  "amount": 90.00,
+  "expenseDate": "2026-01-10"
+}
+
+### 10. Delete an Expense
+DELETE http://localhost:8080/api/expenses/1
+
+### 11. Delete an Apartment
+DELETE http://localhost:8080/api/apartments/1
