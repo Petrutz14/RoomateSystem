@@ -12,10 +12,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest // 1. Starts the Spring context (and connects to your DB)
 @Transactional  // 2. VERY IMPORTANT: Rolls back changes after test finishes
-class UserDaoTest {
+class UserDAOTest {
 
     @Autowired
-    private UserDao userDao;
+    private UserDAO userDao;
 
     @Test
     void testSaveAndFindUser() {

@@ -11,11 +11,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Repository
-public class UserDao {
+public class UserDAO {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public UserDao(JdbcTemplate jdbcTemplate) {
+    public UserDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

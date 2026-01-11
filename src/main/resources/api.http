@@ -1,112 +1,37 @@
-
+    ### 1. Register a new user
 POST http://localhost:8080/api/users/register
 Content-Type: application/json
 
 {
-  "username": "Dani Nepotel1234",
-  "email": "daninepotu1234@yahoo.com",
-  "password": "1234567890"
+  "username": "daninepotu12345",
+  "email": "daninepotu12345@yahoo.com",
+  "password": "password12345"
 }
 
-### 2. Login as User A
-# @name loginA
+
+### 2. Login to get a fresh token (If already registered)
 POST http://localhost:8080/api/users/login
 Content-Type: application/json
 
 {
-  "email": "daninepotu1234@yahoo.com",
-  "password": "1234567890"
+  "email": "daninepotu12345@yahoo.com",
+  "password": "password12345"
 }
 
-### 3. Store the JWT Token from Login
-@tokenA = {{eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNEB5YWhvby5jb20iLCJpYXQiOjE3NjgxNTgwNzYsImV4cCI6MTc2ODI0NDQ3Nn0.llRWvGWkG6jrNr5JOF35TkEWnZFF4HKqC9xcvMfRKoY}}
-
-
-###########################################################
-### APARTMENT MANAGEMENT
-###########################################################
-
-### 4. Create an Apartment (User A)
-# This will automatically link User A as a member in the DB
+### 3. Create an Apartment (Required for Foreign Key)
 POST http://localhost:8080/api/apartments
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNEB5YWhvby5jb20iLCJpYXQiOjE3NjgxNTgwNzYsImV4cCI6MTc2ODI0NDQ3Nn0.llRWvGWkG6jrNr5JOF35TkEWnZFF4HKqC9xcvMfRKoY
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNDVAeWFob28uY29tIiwiaWF0IjoxNzY4MTY2NzkyLCJleHAiOjE3NjgyNTMxOTJ9.1yu9K8tQHPfs_sIUSUmSPdBvODVyT9sjHwAIJr4tMIM
 
 {
-  "address": "123 Security Avenue, Java City"
+  "address": "123 Main Street, Apt 4B"
 }
 
-### 5. Get All My Apartments
-# Should return the apartment created above
-GET http://localhost:8080/api/apartments
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNEB5YWhvby5jb20iLCJpYXQiOjE3NjgxNTgwNzYsImV4cCI6MTc2ODI0NDQ3Nn0.llRWvGWkG6jrNr5JOF35TkEWnZFF4HKqC9xcvMfRKoY
-
-
-###########################################################
-### EXPENSE MANAGEMENT
-###########################################################
-
-### 6. Create an Expense for Apartment 1
-# Note: Ensure the apartmentId matches the ID generated in step 4
-POST http://localhost:8080/api/expenses
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNEB5YWhvby5jb20iLCJpYXQiOjE3NjgxNTgwNzYsImV4cCI6MTc2ODI0NDQ3Nn0.llRWvGWkG6jrNr5JOF35TkEWnZFF4HKqC9xcvMfRKoY
-Content-Type: application/json
-
-{
-  "title": "Monthly Rent",
-  "category": "Housing",
-  "amount": 1200.50,
-  "apartmentId": 1,
-  "expenseDate": "2026-01-11"
-}
-
-### 7. Get Expenses for Apartment 1
-# This uses your new secure getByApartmentForUser method
-GET http://localhost:8080/api/expenses/apartment/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNEB5YWhvby5jb20iLCJpYXQiOjE3NjgxNTgwNzYsImV4cCI6MTc2ODI0NDQ3Nn0.llRWvGWkG6jrNr5JOF35TkEWnZFF4HKqC9xcvMfRKoY
-
-
-###########################################################
-### SECURITY / INTRUDER TEST
-###########################################################
-
-### 8. Register User B (The "Intruder")
-POST http://localhost:8080/api/users/register
-Content-Type: application/json
-
-{
-  "username": "Intruder",
-  "email": "intruder@hacker.com",
-  "password": "hackerpassword"
-}
-
-### 9. Login as User B
-# @name loginB
-POST http://localhost:8080/api/users/login
-Content-Type: application/json
-
-{
-  "email": "intruder@hacker.com",
-  "password": "hackerpassword"
-}
-
-###
-
-### 10. Intruder tries to see User A's Apartment (SHOULD FAIL)
-# This should return a 500/403 "Access Denied" because Intruder is not a member
-GET http://localhost:8080/api/apartments/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpbnRydWRlckBoYWNrZXIuY29tIiwiaWF0IjoxNzY4MTU4MjI3LCJleHAiOjE3NjgyNDQ2Mjd9.vBY2JPQalgdl5nBOzBqu70L4pS5YuNIJ7dkZLqucgC8
-
-### 11. Intruder tries to see User A's Expenses (SHOULD FAIL)
-# This should return an empty list or error because the SQL filters by User B's email
-GET http://localhost:8080/api/expenses/apartment/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpbnRydWRlckBoYWNrZXIuY29tIiwiaWF0IjoxNzY4MTU4MjI3LCJleHAiOjE3NjgyNDQ2Mjd9.vBY2JPQalgdl5nBOzBqu70L4pS5YuNIJ7dkZLqucgC8
-
-
-###
+### 4. Create an Expense (The Bill)
+# Note: Check your DB for the apartmentId, usually 1 if DB was wiped
 POST http://localhost:8080/api/expenses
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNEB5YWhvby5jb20iLCJpYXQiOjE3NjgxNTgwNzYsImV4cCI6MTc2ODI0NDQ3Nn0.llRWvGWkG6jrNr5JOF35TkEWnZFF4HKqC9xcvMfRKoY
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNDVAeWFob28uY29tIiwiaWF0IjoxNzY4MTY2NzkyLCJleHAiOjE3NjgyNTMxOTJ9.1yu9K8tQHPfs_sIUSUmSPdBvODVyT9sjHwAIJr4tMIM
 
 {
   "title": "January Maintenance",
@@ -116,7 +41,24 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNEB5YWhvb
   "date": "2026-01-11"
 }
 
+### 5. Make a Payment (Contribution)
+# Note: expenseId is 1 for the first expense created
+POST http://localhost:8080/api/payments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNDVAeWFob28uY29tIiwiaWF0IjoxNzY4MTY2NzkyLCJleHAiOjE3NjgyNTMxOTJ9.1yu9K8tQHPfs_sIUSUmSPdBvODVyT9sjHwAIJr4tMIM
+
+{
+  "expenseId": 1,
+  "amount": 0.50,
+  "paymentDate": "2026-04-11"
+}
+
+### 6. Verify Payments for the Expense
+GET http://localhost:8080/api/payments/expense/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNDVAeWFob28uY29tIiwiaWF0IjoxNzY4MTY2NzkyLCJleHAiOjE3NjgyNTMxOTJ9.1yu9K8tQHPfs_sIUSUmSPdBvODVyT9sjHwAIJr4tMIM
+
 ###
 GET http://localhost:8080/api/expenses/apartment/1
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNEB5YWhvby5jb20iLCJpYXQiOjE3NjgxNTgwNzYsImV4cCI6MTc2ODI0NDQ3Nn0.llRWvGWkG6jrNr5JOF35TkEWnZFF4HKqC9xcvMfRKoY
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbmVwb3R1MTIzNDVAeWFob28uY29tIiwiaWF0IjoxNzY4MTY2NzkyLCJleHAiOjE3NjgyNTMxOTJ9.1yu9K8tQHPfs_sIUSUmSPdBvODVyT9sjHwAIJr4tMIM
+
+

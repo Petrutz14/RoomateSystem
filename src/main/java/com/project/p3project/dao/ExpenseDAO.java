@@ -6,17 +6,18 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-public class ExpenseDao {
+public class ExpenseDAO {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public ExpenseDao(JdbcTemplate jdbcTemplate) {
+    public ExpenseDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -31,7 +32,6 @@ public class ExpenseDao {
             expense.setCategory(rs.getString("category"));
             expense.setAmount(rs.getBigDecimal("amount"));
 
-            // Modern way to fetch LocalDate from JDBC
             expense.setExpenseDate(rs.getObject("expense_date", LocalDate.class));
 
             // Handle created_at safely
@@ -62,6 +62,11 @@ public class ExpenseDao {
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
+    }
+
+    public void subtractFromBalance(Long expenseId, BigDecimal amountToSubtract) {
+        String sql = "UPDATE expenses SET amount = amount - ? WHERE id = ?";
+        jdbcTemplate.update(sql, amountToSubtract, expenseId);
     }
 
     public List<Expense> findByApartmentAndUser(Long apartmentId, String userEmail) {

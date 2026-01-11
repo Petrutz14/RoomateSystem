@@ -1,7 +1,7 @@
 package com.project.p3project.service;
 
-import com.project.p3project.dao.ApartmentDao;
-import com.project.p3project.dao.UserDao;
+import com.project.p3project.dao.ApartmentDAO;
+import com.project.p3project.dao.UserDAO;
 import com.project.p3project.exception.BlankDataException;
 import com.project.p3project.model.Apartment;
 import com.project.p3project.model.User;
@@ -12,10 +12,10 @@ import java.util.List;
 @Service
 public class ApartmentService {
 
-    private final ApartmentDao apartmentDao;
-    private final UserDao userDao;
+    private final ApartmentDAO apartmentDao;
+    private final UserDAO userDao;
 
-    public ApartmentService(ApartmentDao apartmentDao, UserDao userDao) {
+    public ApartmentService(ApartmentDAO apartmentDao, UserDAO userDao) {
         this.apartmentDao = apartmentDao;
         this.userDao = userDao;
     }

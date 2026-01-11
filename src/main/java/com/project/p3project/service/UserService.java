@@ -1,6 +1,6 @@
 package com.project.p3project.service;
 
-import com.project.p3project.dao.UserDao;
+import com.project.p3project.dao.UserDAO;
 import com.project.p3project.exception.BlankDataException;
 import com.project.p3project.exception.InvalidEmailException;
 import com.project.p3project.exception.UserNotFoundException;
@@ -12,10 +12,10 @@ import java.util.List;
 
 @Service
 public class UserService {
-    private final UserDao userDao;
+    private final UserDAO userDao;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public UserService(UserDao userDao, BCryptPasswordEncoder passwordEncoder) {
+    public UserService(UserDAO userDao, BCryptPasswordEncoder passwordEncoder) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
     }
